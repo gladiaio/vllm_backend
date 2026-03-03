@@ -111,6 +111,27 @@ class GenerateRequest(RequestBase):
                     "multi_modal_data": {"image": images_vllm},
                 }
 
+        # audio
+        audio = pb_utils.get_input_tensor_by_name(self.triton_request, "audio")
+        if audio:
+            audio_np = audio.as_numpy().flatten()
+            sample_rate = 16000
+            sr_tensor = pb_utils.get_input_tensor_by_name(
+                self.triton_request, "sample_rate"
+            )
+            if sr_tensor:
+                sample_rate = int(sr_tensor.as_numpy()[0])
+
+            if isinstance(prompt, str):
+                prompt = {
+                    "prompt": prompt,
+                    "multi_modal_data": {"audio": (audio_np, sample_rate)},
+                }
+            else:
+                if "multi_modal_data" not in prompt:
+                    prompt["multi_modal_data"] = {}
+                prompt["multi_modal_data"]["audio"] = (audio_np, sample_rate)
+
         # stream
         stream = pb_utils.get_input_tensor_by_name(self.triton_request, "stream")
         if stream:

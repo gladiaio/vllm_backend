@@ -131,6 +131,18 @@ class TritonPythonModel:
                 "dims": [1],
                 "optional": True,
             },
+            {
+                "name": "audio",
+                "data_type": "TYPE_FP32",
+                "dims": [-1],
+                "optional": True,
+            },
+            {
+                "name": "sample_rate",
+                "data_type": "TYPE_INT32",
+                "dims": [1],
+                "optional": True,
+            },
         ]
         # Outputs expected by the backend.
         outputs = [
